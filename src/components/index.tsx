@@ -1,4 +1,6 @@
 import Converter from "./Converter";
-import RatesTable from './RatesTable'
+import RatesTable from "./RatesTable";
+import Header from "./Header";
+import Footer from "./Footer";
 
-export { Converter, RatesTable };
+export { Converter, RatesTable, Header, Footer };

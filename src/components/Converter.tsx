@@ -1,6 +1,5 @@
 import { FC, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-// import Dropdown from './Dropdown';
 import {ExchangeRates} from '../App';
 import { Button, Dropdown } from 'semantic-ui-react';
 
@@ -9,25 +8,42 @@ const FlexRow = styled.div`
     flex-direction: row;
 `
 const ConverterContainer = styled(FlexRow)`
-    background-color: red;
     justify-content: space-around;
+    align-items: flex-end;
 `;
 
 const SectionWrapper = styled.div`
-    width: 200px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+`;
+
+const InputWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: flex-start;
+    margin-right: 10px;
+
+    label {
+        margin-left: 3px;
+    }
 `;
 
 const StyledInput = styled.input`
     width: 150px;
+    padding: 9.5px 14px;
+    border: solid 1px #dededf;
+    border-radius: 5px;
 `;
 
 const StyledDropdown = styled(Dropdown)`
-    .search {
-        width: 50px;
-    }
+    min-width: 55px !important;
+    max-width: 75px !important;
+`;
+
+const SwapButton = styled(Button)`
+    margin: 0 20px !important;
+    height: 37px;
 `;
 
 type Rate = {
@@ -127,13 +143,16 @@ const Converter:FC = () => {
         setTranslatedInput(temp.toString());
     };
 
+
+    // style={{width: "20px !important", backgroundColor: 'red' }}
     return (
         <ConverterContainer>
             <SectionWrapper>
-                <label htmlFor="changeCurrency">Change</label>
-                <StyledInput type="text" id="changeCurrency" value={baseInput} onChange={handleBaseInputChange}/>
+                <InputWrapper>
+                    <label htmlFor="changeCurrency">Change</label>
+                    <StyledInput type="text" id="changeCurrency" value={baseInput} onChange={handleBaseInputChange}/>
+                </InputWrapper>
                 <StyledDropdown 
-                    placeholder='currency' 
                     search 
                     selection 
                     options={[...stateOptions, {
@@ -145,12 +164,13 @@ const Converter:FC = () => {
                     onChange={(_, data) => setBaseCcy(data.value as string)}
                 />
             </SectionWrapper>
-            <Button icon='exchange' onClick={switchValues}/>
+            <SwapButton icon='exchange' onClick={switchValues}/>
             <SectionWrapper>
-                <label htmlFor="getCurrency">Get</label>
-                <StyledInput type="text" id="getCurrency" value={translatedInput} onChange={handleTranslatedInputChange}/>
+                <InputWrapper>
+                    <label htmlFor="getCurrency">Get</label>
+                    <StyledInput type="text" id="getCurrency" value={translatedInput} onChange={handleTranslatedInputChange}/>
+                </InputWrapper>
                 <StyledDropdown 
-                    placeholder='currency' 
                     search 
                     selection 
                     options={[...stateOptions, {
