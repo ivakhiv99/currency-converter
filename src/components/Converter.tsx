@@ -30,6 +30,13 @@ const StyledDropdown = styled(Dropdown)`
     }
 `;
 
+type Rate = {
+    base_ccy:string;
+    buy: number;
+    ccy: string;
+    sale: number;
+}
+
 const Converter:FC = () => {
     const [baseInput, setBaseInput] = useState<number>(100);
     const [baseCcy, setBaseCcy] = useState<string>('UAH');
@@ -39,38 +46,66 @@ const Converter:FC = () => {
 
     const data = useContext(ExchangeRates);
 
-    //TODO: move out
+    //TODO: move out & refactor
     const convert = (value: number, baseCurrency:string, currency: string, action: string) => {
 
-
-        const rate = data.find((rateItem) => rateItem.ccy === currency);
-        if (!rate) {
-            return null;
+        if(baseCurrency === currency) {
+            return value;
         }
-        return action === 'sell' ? value / rate.sale : value / rate.buy;
+
+        if (baseCurrency === 'UAH' && currency !== 'UAH') {
+            const rate = data.find((rateItem) => rateItem.ccy === currency);
+            if (!rate) {
+                return null;
+            }
+            return action === 'sell' ? value / rate.sale : value / rate.buy;
+        }
+
+        if (currency === 'UAH' && baseCurrency !== 'UAH' ) {
+            const rate = data.find((rateItem) => rateItem.ccy === baseCurrency);
+            if (!rate) {
+                return null;
+            }
+            return action === 'sell' ? value * rate.sale : value * rate.buy;
+        }
+
+        if (currency !== 'UAH' && baseCurrency !== 'UAH' ) {
+            const baseCcyToUAH: Rate = data.find((rateItem) => rateItem.ccy === baseCurrency);
+            const translatedCcyToUAH: Rate = data.find((rateItem) => rateItem.ccy === currency);
+
+            if (!baseCcyToUAH || !translatedCcyToUAH) {
+                return null;
+            }
+            
+            const rate: Rate = {
+                base_ccy: baseCurrency,
+                ccy: currency,
+                sale: baseCcyToUAH.sale / translatedCcyToUAH.sale,
+                buy: baseCcyToUAH.buy / translatedCcyToUAH.buy
+            }
+            return action === 'sell' ? value * rate.sale : value * rate.buy;
+        }
+
     };
 
     useEffect(() => {
-        // if(baseCcy.length && translateToCcy.length) {
-        //     console.log('calling convert')
-        //     const newTranslatedInput = convert(baseInput, 'UAH', 'PLZ', 'sell');
-        //     if (newTranslatedInput) {
-        //         setTranslatedInput(newTranslatedInput.toFixed(2).toString()); 
-        //     }
-        //     //  else alert('rate is undefined')
-        // }
+        if(baseCcy.length && translateToCcy.length) {
+            const newTranslatedInput = convert(baseInput, baseCcy, translateToCcy, 'sell');
+            if (newTranslatedInput) {
+                setTranslatedInput(newTranslatedInput.toFixed(2).toString()); 
+            }
+            //  else alert('rate is undefined')
+        }
     }, [baseInput, data, baseCcy, translateToCcy]);
 
     // TODO: unify this functions?
     const handleBaseInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-        console.log('handleBaseInputChange',e.currentTarget?.value)
         if(e.currentTarget?.value) {
             setBaseInput(+e.currentTarget?.value)
         } else setBaseInput(0);
     }
 
     const handleTranslatedInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-        console.log('handleBaseInputChange',e.currentTarget?.value)
         if(e.currentTarget?.value) {
             setTranslatedInput(e.currentTarget?.value)
         }
