@@ -22,13 +22,12 @@ const mockData = [{"ccy":"CHF","base_ccy":"UAH","buy":"40.00670","sale":"40.0067
 export const ExchangeRates = createContext<any[]>([]);
 
 function App() {
-  const endpoint = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=4';
   const fetcher = () => fetch(process.env.REACT_APP_ENDPINT!).then(res => res);
   const mockFetcher = () => mockData;
   
   const { data, error, isLoading } = useSWR(process.env.REACT_APP_ENDPINT!, mockFetcher);
 
-  useEffect(()=>console.log({data}), [data]);
+  // useEffect(()=>console.log({data}), [data]);
 
 
   // TODO: Replace context with zustand
