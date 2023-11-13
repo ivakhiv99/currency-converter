@@ -1,6 +1,6 @@
 import { useEffect, createContext } from 'react';
 import useSWR from 'swr'
-import { Converter } from './components'; 
+import { Converter, RatesTable } from './components'; 
 import styled from 'styled-components';
 
 
@@ -34,6 +34,7 @@ function App() {
   return (
     <ExchangeRates.Provider value={data || []}>
       <HeaderPlaceholder/>
+      <RatesTable />
       <ContentContainer>
         <Converter/>
       </ContentContainer>
