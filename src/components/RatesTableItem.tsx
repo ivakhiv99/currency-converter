@@ -1,6 +1,7 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Table } from 'semantic-ui-react';
 import styled from 'styled-components';
+import useDebounce from '../utils/useDebounce';
 
 const StyledInput = styled.input`
     border: none;
@@ -18,15 +19,25 @@ interface IRatesTableItem {
     handleChange: (value: string) => void
 }
 
-//TODO: Add throttle  
+//TODO: Add debounce  
 const RatesTableItem:FC<IRatesTableItem> = ({value, handleChange}) => {
     const [inputValue, setInputvalue] = useState<string>(value);
 
     const handleCellChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setInputvalue(value);
-        handleChange(value);
+        let value = e.target.value;
+        // const regex = /[^0-9\.]/;
+        value = value.replaceAll(/[^0-9\.]/gi, '');
+        const dotIndex = value.lastIndexOf('.');
+        if (dotIndex === -1 || value.length - 1 -dotIndex <= 2) {
+            console.log({value})
+            setInputvalue(value);
+            handleChange(value);
+        }
     }
+
+    // TODO: add validation for +- 10% to the value
+    // const validate = (value): boolean => {
+    // }
 
     return (
         <StyledInput 
