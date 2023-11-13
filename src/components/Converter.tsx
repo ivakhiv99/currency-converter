@@ -1,7 +1,8 @@
 import { FC, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import {ExchangeRates} from '../App';
+import { useStore} from '../App';
 import { Button, Dropdown } from 'semantic-ui-react';
+import { Rate } from "../types";
 
 const FlexRow = styled.div`
     display: flex;
@@ -46,13 +47,6 @@ const SwapButton = styled(Button)`
     height: 37px;
 `;
 
-type Rate = {
-    base_ccy:string;
-    buy: number;
-    ccy: string;
-    sale: number;
-}
-
 const Converter:FC = () => {
     const [baseInput, setBaseInput] = useState<number>(100);
     const [baseCcy, setBaseCcy] = useState<string>('UAH');
@@ -60,17 +54,20 @@ const Converter:FC = () => {
     const [translatedInput, setTranslatedInput] = useState<string>('');
     const [translateToCcy, setTranslateToCcy] = useState<string>('');
 
-    const data = useContext(ExchangeRates);
+    const ratesData = useStore(state => state.ratesData);
+
+    useEffect(()=>console.log({ratesData}), [ratesData]);
 
     //TODO: move out & refactor
     const convert = (value: number, baseCurrency:string, currency: string, action: string) => {
-
+        console.log('convert  sd');
         if(baseCurrency === currency) {
             return value;
         }
 
         if (baseCurrency === 'UAH' && currency !== 'UAH') {
-            const rate = data.find((rateItem) => rateItem.ccy === currency);
+            const rate = ratesData.find((rateItem) => rateItem.ccy === currency);
+            console.log('convert', {rate})
             if (!rate) {
                 return null;
             }
@@ -78,7 +75,7 @@ const Converter:FC = () => {
         }
 
         if (currency === 'UAH' && baseCurrency !== 'UAH' ) {
-            const rate = data.find((rateItem) => rateItem.ccy === baseCurrency);
+            const rate = ratesData.find((rateItem) => rateItem.ccy === baseCurrency);
             if (!rate) {
                 return null;
             }
@@ -86,8 +83,8 @@ const Converter:FC = () => {
         }
 
         if (currency !== 'UAH' && baseCurrency !== 'UAH' ) {
-            const baseCcyToUAH: Rate = data.find((rateItem) => rateItem.ccy === baseCurrency);
-            const translatedCcyToUAH: Rate = data.find((rateItem) => rateItem.ccy === currency);
+            const baseCcyToUAH: Rate = ratesData.find((rateItem) => rateItem.ccy === baseCurrency)!;
+            const translatedCcyToUAH: Rate = ratesData.find((rateItem) => rateItem.ccy === currency)!;
 
             if (!baseCcyToUAH || !translatedCcyToUAH) {
                 return null;
@@ -112,7 +109,7 @@ const Converter:FC = () => {
             }
             //  else alert('rate is undefined')
         }
-    }, [baseInput, data, baseCcy, translateToCcy]);
+    }, [baseInput, ratesData, baseCcy, translateToCcy]);
 
     // TODO: unify this functions?
     const handleBaseInputChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -127,7 +124,7 @@ const Converter:FC = () => {
         }
     }
 
-    const stateOptions = data.map(({ccy}) => ({
+    const stateOptions = ratesData.map(({ccy}) => ({
         key: ccy,
         text: ccy,
         value: ccy,

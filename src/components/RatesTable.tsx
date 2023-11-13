@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 import { Table } from 'semantic-ui-react';
 import styled from 'styled-components';
-import { ExchangeRates } from '../App';
 import RatesTableItem from './RatesTableItem';
+import { useStore } from '../App';
+import { Rate } from '../types';
 
 
 const TableWrapper = styled.div`
@@ -33,9 +34,16 @@ const MiddleHeaderCell = styled(Table.HeaderCell)`
 `;
 
 const RatesTable = () => {
-    const data = useContext(ExchangeRates);
+    const [ratesData, updateRatesData] = useStore(state => [state.ratesData, state.updateRatesData]);
 
-    console.log({data})
+    const handleUpdateRate = ({ccy, newValue, type}:{ccy: string, newValue: string, type: string}) => {
+        const oldRate = ratesData.find((rate) => rate.ccy === ccy);
+        if(oldRate) {
+            const newRate: Rate = { ...oldRate, [type === 'buy' ? 'buy' : 'sale']: +newValue }
+            console.log({newRate});
+            updateRatesData(newRate);
+        }
+    }
 
     return (
         <TableWrapper>
@@ -49,14 +57,28 @@ const RatesTable = () => {
                 </Table.Header> 
                 <Table.Body>
                     {
-                        data.map(({ccy, base_ccy, buy, sale}) => (
+                        ratesData.map(({ccy, base_ccy, buy, sale}) => (
                             <Table.Row>
                                 <StyledCCYcell>{`${base_ccy} to ${ccy}`}</StyledCCYcell>
                                 <MiddleCell>
-                                    <RatesTableItem value={Number(buy).toFixed(2)} handleChange={(value) => console.log('new value', value)}/>
+                                    <RatesTableItem
+                                        value={Number(buy).toFixed(2)}
+                                        handleChange={(value) => handleUpdateRate({
+                                            ccy,
+                                            newValue: value,
+                                            type: 'buy',
+                                        })}
+                                    />
                                 </MiddleCell>
                                 <ValueCell>
-                                    <RatesTableItem value={Number(sale).toFixed(2)} handleChange={(value) => console.log('new value', value)}/>
+                                    <RatesTableItem
+                                        value={Number(sale).toFixed(2)}
+                                        handleChange={(value) => handleUpdateRate({
+                                            ccy,
+                                            newValue: value,
+                                            type: 'sell',
+                                        })}
+                                    />
                                 </ValueCell>
                             </Table.Row>
                         ))

@@ -25,7 +25,6 @@ const RatesTableItem:FC<IRatesTableItem> = ({value, handleChange}) => {
 
     const handleCellChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value;
-        // const regex = /[^0-9\.]/;
         value = value.replaceAll(/[^0-9\.]/gi, '');
         const dotIndex = value.lastIndexOf('.');
         if (dotIndex === -1 || value.length - 1 -dotIndex <= 2) {
