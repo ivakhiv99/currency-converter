@@ -8,7 +8,6 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-
 //NOTE: semantic-ui causes warning about ref issue & strict mode
 root.render(
   <React.StrictMode>

@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { Table } from 'semantic-ui-react';
 import styled from 'styled-components';
 import RatesTableItem from './RatesTableItem';

@@ -1,4 +1,4 @@
-import { useEffect, createContext } from 'react';
+import { useEffect } from 'react';
 import useSWR from 'swr';
 import { Converter, RatesTable, Header, Footer } from './components'; 
 import styled from 'styled-components';
@@ -43,11 +43,7 @@ export const useStore = create<Store>((set) => ({
 }));
 
 
-// export const ExchangeRates = createContext<any[]>([]);
-
 function App() {
-  const fetcher = () => fetch(process.env.REACT_APP_ENDPINT!).then(res => res);
-
   //TODO: immitate delay for mockFetcher with Promice
   const mockFetcher = () => mockData;
   const { data, error, isLoading } = useSWR(process.env.REACT_APP_ENDPINT!, mockFetcher);
@@ -67,10 +63,7 @@ function App() {
     }
   }, [data]);
 
-
-  // TODO: Replace context with zustand
   return (
-    // <ExchangeRates.Provider value={data || []}>
     <>
       <Header/>
       <ContentContainer>
@@ -79,7 +72,6 @@ function App() {
       </ContentContainer>
       <Footer/>
       </>
-    // </ExchangeRates.Provider>
   );
 }
 

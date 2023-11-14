@@ -1,8 +1,9 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useStore} from '../App';
 import { Button, Dropdown } from 'semantic-ui-react';
 import { Rate } from "../types";
+import Indicator from './Indicator';
 
 const FlexRow = styled.div`
     display: flex;
@@ -11,6 +12,8 @@ const FlexRow = styled.div`
 const ConverterContainer = styled(FlexRow)`
     justify-content: space-around;
     align-items: flex-end;
+
+    margin-bottom: 20px;
 `;
 
 const SectionWrapper = styled.div`
@@ -48,18 +51,21 @@ const SwapButton = styled(Button)`
 `;
 
 const Converter:FC = () => {
+    //TODO: use enums for sell/buy
+    const [currentAction, setCurrentAction] = useState<string>('sell');
     const [baseInput, setBaseInput] = useState<number>(100);
     const [baseCcy, setBaseCcy] = useState<string>('UAH');
-
-    const [translatedInput, setTranslatedInput] = useState<string>('');
-    const [translateToCcy, setTranslateToCcy] = useState<string>('');
+    const [translatedInput, setTranslatedInput] = useState<number>(100);
+    const [translateToCcy, setTranslateToCcy] = useState<string>('UAH');
 
     const ratesData = useStore(state => state.ratesData);
-
-    useEffect(()=>console.log({ratesData}), [ratesData]);
-
+    const stateOptions = ratesData.map(({ccy}) => ({
+        key: ccy,
+        text: ccy,
+        value: ccy,
+    }));
     //TODO: move out & refactor
-    const convert = (value: number, baseCurrency:string, currency: string, action: string) => {
+    const convert = (value: number, baseCurrency:string, currency: string) => {
         if(baseCurrency === currency) {
             return value;
         }
@@ -69,7 +75,7 @@ const Converter:FC = () => {
             if (!rate) {
                 return null;
             }
-            return action === 'sell' ? value / rate.sale : value / rate.buy;
+            return currentAction === 'sell' ? value / rate.sale : value / rate.buy;
         }
 
         if (currency === 'UAH' && baseCurrency !== 'UAH' ) {
@@ -77,7 +83,7 @@ const Converter:FC = () => {
             if (!rate) {
                 return null;
             }
-            return action === 'sell' ? value * rate.sale : value * rate.buy;
+            return currentAction === 'sell' ? value * rate.sale : value * rate.buy;
         }
 
         if (currency !== 'UAH' && baseCurrency !== 'UAH' ) {
@@ -94,39 +100,43 @@ const Converter:FC = () => {
                 sale: baseCcyToUAH.sale / translatedCcyToUAH.sale,
                 buy: baseCcyToUAH.buy / translatedCcyToUAH.buy
             }
-            return action === 'sell' ? value * rate.sale : value * rate.buy;
+            return currentAction === 'sell' ? value * rate.sale : value * rate.buy;
         }
 
     };
 
-    useEffect(() => {
+    const triggerConvert = () => {
         if(baseCcy.length && translateToCcy.length) {
-            const newTranslatedInput = convert(baseInput, baseCcy, translateToCcy, 'sell');
-            if (newTranslatedInput) {
-                setTranslatedInput(newTranslatedInput.toFixed(2).toString()); 
+            if(currentAction === 'sell') {
+                const newTranslatedInput = convert(baseInput, baseCcy, translateToCcy);
+                if (newTranslatedInput) {
+                    setTranslatedInput(+newTranslatedInput.toFixed(2)); 
+                }
+            } else {
+                const newBaseInput = convert(translatedInput, translateToCcy, baseCcy);
+                if (newBaseInput) {
+                    setBaseInput(+newBaseInput.toFixed(2)); 
+                }
             }
-            //  else alert('rate is undefined')
         }
-    }, [baseInput, ratesData, baseCcy, translateToCcy]);
+    };
+
+    // useEffect(() => console.log({currentAction}), [currentAction]);
+
+    useEffect(() => triggerConvert(), [ratesData, baseInput, translatedInput, baseCcy, translateToCcy, currentAction]);
 
     // TODO: unify this functions?
     const handleBaseInputChange = (e: React.FormEvent<HTMLInputElement>) => {
         if(e.currentTarget?.value) {
-            setBaseInput(+e.currentTarget?.value)
+            setBaseInput(+e.currentTarget?.value);
         } else setBaseInput(0);
     }
 
     const handleTranslatedInputChange = (e: React.FormEvent<HTMLInputElement>) => {
         if(e.currentTarget?.value) {
-            setTranslatedInput(e.currentTarget?.value)
-        }
+            setTranslatedInput(+e.currentTarget?.value)
+        } else setBaseInput(0);
     }
-
-    const stateOptions = ratesData.map(({ccy}) => ({
-        key: ccy,
-        text: ccy,
-        value: ccy,
-    }));
 
     const switchValues = () => {
         let temp: number | string = baseCcy;
@@ -135,49 +145,60 @@ const Converter:FC = () => {
 
         temp = baseInput;
         setBaseInput(+translatedInput);
-        setTranslatedInput(temp.toString());
+        setTranslatedInput(temp);
+
+        setCurrentAction((prev) => prev === 'sell' ? 'buy' : 'sell')
     };
 
-
-    // style={{width: "20px !important", backgroundColor: 'red' }}
     return (
-        <ConverterContainer>
-            <SectionWrapper>
-                <InputWrapper>
-                    <label htmlFor="changeCurrency">Change</label>
-                    <StyledInput type="text" id="changeCurrency" value={baseInput} onChange={handleBaseInputChange}/>
-                </InputWrapper>
-                <StyledDropdown 
-                    search 
-                    selection 
-                    options={[...stateOptions, {
-                        key: 'UAH',
-                        text: 'UAH',
-                        value: 'UAH',
-                    }]} 
-                    value={baseCcy}
-                    onChange={(_, data) => setBaseCcy(data.value as string)}
-                />
-            </SectionWrapper>
-            <SwapButton icon='exchange' onClick={switchValues}/>
-            <SectionWrapper>
-                <InputWrapper>
-                    <label htmlFor="getCurrency">Get</label>
-                    <StyledInput type="text" id="getCurrency" value={translatedInput} onChange={handleTranslatedInputChange}/>
-                </InputWrapper>
-                <StyledDropdown 
-                    search 
-                    selection 
-                    options={[...stateOptions, {
-                        key: 'UAH',
-                        text: 'UAH',
-                        value: 'UAH',
-                    }]}
-                    value={translateToCcy}
-                    onChange={(_, data) => setTranslateToCcy(data.value as string)}
-                />
-            </SectionWrapper>
-        </ConverterContainer>
+        <div>
+            <ConverterContainer>
+                <SectionWrapper>
+                    <InputWrapper>
+                        <label htmlFor="changeCurrency">Change</label>
+                        <StyledInput type="text" id="changeCurrency" value={baseInput} onChange={handleBaseInputChange} onFocus={() => setCurrentAction('sell')}/>
+                    </InputWrapper>
+                    <StyledDropdown 
+                        search 
+                        selection 
+                        options={[...stateOptions, {
+                            key: 'UAH',
+                            text: 'UAH',
+                            value: 'UAH',
+                        }]}
+                        value={baseCcy}
+                        onFocus={() => setCurrentAction('sell')}
+                        onChange={(_, data) => setBaseCcy(data.value as string)}
+                    />
+                </SectionWrapper>
+                <SwapButton icon='exchange' onClick={switchValues}/>
+                <SectionWrapper>
+                    <InputWrapper>
+                        <label htmlFor="getCurrency">Get</label>
+                        <StyledInput type="text" id="getCurrency" value={translatedInput} onChange={handleTranslatedInputChange} onFocus={() => setCurrentAction('buy')}/>
+                    </InputWrapper>
+                    <StyledDropdown 
+                        search 
+                        selection 
+                        options={[...stateOptions, {
+                            key: 'UAH',
+                            text: 'UAH',
+                            value: 'UAH',
+                        }]}
+                        value={translateToCcy}
+                        onFocus={() => setCurrentAction('buy')}
+                        onChange={(_, data) => setTranslateToCcy(data.value as string)}
+                    />
+                </SectionWrapper>
+            </ConverterContainer>
+            <Indicator 
+                operationType={currentAction}
+                leftSideValue={baseInput}
+                leftSideCurrency={baseCcy}
+                rightSideValue={translatedInput}
+                rightSideCurrency={translateToCcy}
+            />
+        </div>
     );
 };
 
