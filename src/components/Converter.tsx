@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import styled from "styled-components";
-import { useStore} from '../App';
+import { useStore } from '../store';
 import { Button, Dropdown } from 'semantic-ui-react';
 import { Rate } from "../types";
 import Indicator from './Indicator';
@@ -64,6 +64,7 @@ const Converter:FC = () => {
         text: ccy,
         value: ccy,
     }));
+    
     //TODO: move out & refactor
     const convert = (value: number, baseCurrency:string, currency: string) => {
         if(baseCurrency === currency) {
@@ -120,8 +121,6 @@ const Converter:FC = () => {
             }
         }
     };
-
-    // useEffect(() => console.log({currentAction}), [currentAction]);
 
     useEffect(() => triggerConvert(), [ratesData, baseInput, translatedInput, baseCcy, translateToCcy, currentAction]);
 
@@ -191,13 +190,17 @@ const Converter:FC = () => {
                     />
                 </SectionWrapper>
             </ConverterContainer>
-            <Indicator 
-                operationType={currentAction}
-                leftSideValue={baseInput}
-                leftSideCurrency={baseCcy}
-                rightSideValue={translatedInput}
-                rightSideCurrency={translateToCcy}
-            />
+            {
+                baseCcy !== translateToCcy &&
+                <Indicator 
+                    operationType={currentAction}
+                    leftSideValue={baseInput}
+                    leftSideCurrency={baseCcy}
+                    rightSideValue={translatedInput}
+                    rightSideCurrency={translateToCcy}
+                />
+            }
+
         </div>
     );
 };

@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import useSWR from 'swr';
-import { Converter, RatesTable, Header, Footer } from './components'; 
+import { Converter, RatesTable, Header, Footer, ApiErrorModal } from './components'; 
 import styled from 'styled-components';
-import { create } from 'zustand';
 import { Rate } from './types';
+import mockFetcher from './apiSimulation';
+import { Dimmer, Loader } from 'semantic-ui-react';
+import { useStore } from './store';
 
 const ContentContainer = styled.div`
   max-width: 1366px;
@@ -14,46 +16,14 @@ const ContentContainer = styled.div`
   align-items: center;
 `;
 
-const mockData = [{"ccy":"CHF","base_ccy":"UAH","buy":"40.00670","sale":"40.00670"},{"ccy":"CZK","base_ccy":"UAH","buy":"1.56860","sale":"1.56860"},{"ccy":"GBP","base_ccy":"UAH","buy":"44.18370","sale":"44.18370"},{"ccy":"ILS","base_ccy":"UAH","buy":"9.37100","sale":"9.37100"},{"ccy":"JPY","base_ccy":"UAH","buy":"0.23848","sale":"0.23848"},{"ccy":"NOK","base_ccy":"UAH","buy":"3.22790","sale":"3.22790"},{"ccy":"PLZ","base_ccy":"UAH","buy":"8.65850","sale":"8.65850"},{"ccy":"SEK","base_ccy":"UAH","buy":"5","sale":"7"
-}];
-
-type Store = {
-  ratesData: Rate[];
-  setRatesData: (rates: Rate[]) => void;
-  updateRatesData: (updatedRate: Rate) => void;
-}
-
-//TODO: move out
-export const useStore = create<Store>((set) => ({
-  ratesData: [],
-  setRatesData: (rates) => set((state) => ({
-      ...state,
-      ratesData: rates
-  })),
-  updateRatesData: (updatedRate) => set((state) => {
-    const copyOfRates = [...state.ratesData];
-    const oldRate = state.ratesData.find(rate => rate.ccy === updatedRate.ccy);
-    const index = state.ratesData.indexOf(oldRate!);
-    copyOfRates.splice(index, 1, updatedRate);
-    return ({
-      ...state,
-      ratesData: [...copyOfRates]
-    });
-  }),
-}));
-
-
 function App() {
-  //TODO: immitate delay for mockFetcher with Promice
-  const mockFetcher = () => mockData;
   const { data, error, isLoading } = useSWR(process.env.REACT_APP_ENDPINT!, mockFetcher);
-
   const setRatesData = useStore((state) => state.setRatesData);
 
   useEffect(() => {
-    if (data) {
+    if (!isLoading && !error) {
       //TODO: Refactor this:
-      let typeChangedData = data.map((item) => ({
+      let typeChangedData = (data as Rate[]).map((item) => ({
         base_ccy: item.base_ccy,
         buy: +item.buy,
         ccy: item.ccy,
@@ -61,7 +31,11 @@ function App() {
       }))
       setRatesData(typeChangedData);
     }
-  }, [data]);
+  }, [data, error, isLoading]);
+
+
+  useEffect(()=>localStorage.setItem('request-counter', '0'), []);
+  const handleAPIModalClose = () => {window.location.reload(); }
 
   return (
     <>
@@ -70,6 +44,10 @@ function App() {
         <RatesTable />
         <Converter/>
       </ContentContainer>
+      <Dimmer active={isLoading}>
+          <Loader>Loading</Loader>
+      </Dimmer>
+      <ApiErrorModal isOpen={!!error} handleClose={handleAPIModalClose}/>
       <Footer/>
       </>
   );

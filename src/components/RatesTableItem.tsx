@@ -7,9 +7,10 @@ const StyledInput = styled.input`
     border: none;
     outline: none;
     padding-bottom: 5px;
-
+    text-align: center;
+    max-width: 100px;
     &:focus {
-        border-bottom: 1px solid #666;
+        border-bottom: 1px solid #999999;
     }
 
 `;

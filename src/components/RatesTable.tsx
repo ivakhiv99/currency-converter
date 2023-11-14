@@ -1,7 +1,7 @@
 import { Table } from 'semantic-ui-react';
 import styled from 'styled-components';
 import RatesTableItem from './RatesTableItem';
-import { useStore } from '../App';
+import { useStore } from '../store';
 import { Rate } from '../types';
 
 
@@ -10,21 +10,15 @@ const TableWrapper = styled.div`
     margin-bottom: 150px;
 `;
 
-const StyledTable = styled(Table)`
-    /* width: 500px; */
-`;
-
-const StyledCCYcell = styled(Table.Cell)`
-    width: 120px;
-
-`;
-
 const ValueCell = styled(Table.Cell)`
-    /* display: flex;
-    align-items: center; */
+    text-align: center !important;
 `;
 
-const MiddleCell = styled(Table.Cell)`
+const StyledCCYcell = styled(ValueCell)`
+    width: 120px;
+`;
+
+const MiddleCell = styled(ValueCell)`
     border-right: 1px solid #e3e5e5;
 `;
 
@@ -45,12 +39,12 @@ const RatesTable = () => {
 
     return (
         <TableWrapper>
-            <StyledTable definition>
+            <Table definition>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell />
-                        <MiddleHeaderCell>Buy</MiddleHeaderCell>
-                        <Table.HeaderCell>Sell</Table.HeaderCell>
+                        <MiddleHeaderCell textAlign='center'>Buy</MiddleHeaderCell>
+                        <Table.HeaderCell textAlign='center'>Sell</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header> 
                 <Table.Body>
@@ -82,7 +76,7 @@ const RatesTable = () => {
                         ))
                     }
                 </Table.Body>
-            </StyledTable>
+            </Table>
         </TableWrapper> 
     );
 };
