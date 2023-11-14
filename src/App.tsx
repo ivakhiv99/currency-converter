@@ -32,9 +32,15 @@ export const useStore = create<Store>((set) => ({
   })),
   updateRatesData: (updatedRate) => set((state) => {
     console.log('updateRatesData ', updatedRate);
+    console.log('old rates ', state.ratesData)
+    const copyOfRates = [...state.ratesData];
+    const oldRate = state.ratesData.find(rate => rate.ccy !== updatedRate.ccy);
+    const index = state.ratesData.indexOf(oldRate!);
+    copyOfRates.splice(index, 1, updatedRate);
+    console.log('new rates ',{copyOfRates});
     return ({
       ...state,
-      ratesData: [...state.ratesData.filter( rate => rate.ccy !== updatedRate.ccy), updatedRate]
+      ratesData: [...copyOfRates]
     })
   }),
 }));

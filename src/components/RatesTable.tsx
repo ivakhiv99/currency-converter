@@ -62,7 +62,7 @@ const RatesTable = () => {
                                 <StyledCCYcell>{`${base_ccy} to ${ccy}`}</StyledCCYcell>
                                 <MiddleCell>
                                     <RatesTableItem
-                                        value={Number(buy).toFixed(2)}
+                                        defaultValue={Number(buy).toFixed(2)}
                                         handleChange={(value) => handleUpdateRate({
                                             ccy,
                                             newValue: value,
@@ -72,7 +72,7 @@ const RatesTable = () => {
                                 </MiddleCell>
                                 <ValueCell>
                                     <RatesTableItem
-                                        value={Number(sale).toFixed(2)}
+                                        defaultValue={Number(sale).toFixed(2)}
                                         handleChange={(value) => handleUpdateRate({
                                             ccy,
                                             newValue: value,
