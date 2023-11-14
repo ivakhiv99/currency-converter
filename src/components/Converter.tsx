@@ -60,14 +60,12 @@ const Converter:FC = () => {
 
     //TODO: move out & refactor
     const convert = (value: number, baseCurrency:string, currency: string, action: string) => {
-        console.log('convert  sd');
         if(baseCurrency === currency) {
             return value;
         }
 
         if (baseCurrency === 'UAH' && currency !== 'UAH') {
             const rate = ratesData.find((rateItem) => rateItem.ccy === currency);
-            console.log('convert', {rate})
             if (!rate) {
                 return null;
             }

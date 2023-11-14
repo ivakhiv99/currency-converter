@@ -40,7 +40,6 @@ const RatesTable = () => {
         const oldRate = ratesData.find((rate) => rate.ccy === ccy);
         if(oldRate) {
             const newRate: Rate = { ...oldRate, [type === 'buy' ? 'buy' : 'sale']: +newValue }
-            console.log({newRate});
             updateRatesData(newRate);
         }
     }
@@ -58,7 +57,7 @@ const RatesTable = () => {
                 <Table.Body>
                     {
                         ratesData.map(({ccy, base_ccy, buy, sale}) => (
-                            <Table.Row>
+                            <Table.Row key={ccy}>
                                 <StyledCCYcell>{`${base_ccy} to ${ccy}`}</StyledCCYcell>
                                 <MiddleCell>
                                     <RatesTableItem

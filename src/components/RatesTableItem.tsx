@@ -36,7 +36,6 @@ const RatesTableItem:FC<IRatesTableItem> = ({defaultValue, handleChange}) => {
 
     useEffect(() => setInputvalue(defaultValue), [defaultValue]);
 
-    // TODO: add validation for +- 10% to the value
     const validate = (value: string) => {
         const number = +value;
         const baseNumber = +defaultValue
@@ -50,28 +49,24 @@ const RatesTableItem:FC<IRatesTableItem> = ({defaultValue, handleChange}) => {
     }
 
     const handlePopupClose = () => {
-        console.log('handlePopupClose')
         setPopupIsOpen(false);
         setInputvalue(defaultValue);
     }
 
     return (
-        <>
-            <Popup
-                content='New value must not stray away from 10% of original value'
-                inverted
-                onClose={handlePopupClose}
-                trigger={
-                    <StyledInput
-                        value={inputValue} 
-                        onChange={handleCellChange}
-                    />
-                }
-                on={'click'}
-                open={popupIsOpen}
-            />
-
-        </>
+        <Popup
+            content='New value must not stray away from 10% of original value'
+            inverted
+            onClose={handlePopupClose}
+            trigger={
+                <StyledInput
+                    value={inputValue} 
+                    onChange={handleCellChange}
+                />
+            }
+            on={'click'}
+            open={popupIsOpen}
+        />
     );
 };
 
