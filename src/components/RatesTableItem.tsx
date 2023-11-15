@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Popup, Table } from 'semantic-ui-react';
+import { Popup } from 'semantic-ui-react';
 import styled from 'styled-components';
 import useDebounce from '../utils/useDebounce';
 
@@ -59,8 +59,10 @@ const RatesTableItem:FC<IRatesTableItem> = ({defaultValue, handleChange}) => {
             content='New value must not stray away from 10% of original value'
             inverted
             onClose={handlePopupClose}
+            data-testid="warning-popup"
             trigger={
                 <StyledInput
+                    data-testid="cell-input"
                     value={inputValue} 
                     onChange={handleCellChange}
                 />

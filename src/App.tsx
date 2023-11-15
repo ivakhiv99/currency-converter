@@ -33,6 +33,11 @@ function App() {
     }
   }, [data, error, isLoading]);
 
+  useEffect(()=> {
+    if(error) {
+      console.error(error);
+    }
+  }, [error]);
 
   useEffect(()=>localStorage.setItem('request-counter', '0'), []);
   const handleAPIModalClose = () => {window.location.reload(); }

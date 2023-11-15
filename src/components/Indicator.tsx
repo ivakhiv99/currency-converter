@@ -32,7 +32,7 @@ const Indicator:FC<IIndicator> = ({operationType, leftSideValue, leftSideCurrenc
     const result = operationType === 'sell' ? 'GET' : 'FOR';
     
     return (
-        <Wrapper>
+        <Wrapper  data-testid="exchange-indicator">
             <Block>{`${action} ${leftSideValue} ${leftSideCurrency}`}</Block>
             <Block>{`${result} ${rightSideValue} ${rightSideCurrency}`}</Block>
         </Wrapper>

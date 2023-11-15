@@ -65,7 +65,6 @@ const Converter:FC = () => {
         value: ccy,
     }));
     
-    //TODO: move out & refactor
     const convert = (value: number, baseCurrency:string, currency: string) => {
         if(baseCurrency === currency) {
             return value;
@@ -151,13 +150,14 @@ const Converter:FC = () => {
 
     return (
         <div>
-            <ConverterContainer>
+            <ConverterContainer data-testid="converter-container">
                 <SectionWrapper>
                     <InputWrapper>
                         <label htmlFor="changeCurrency">Change</label>
                         <StyledInput type="text" id="changeCurrency" value={baseInput} onChange={handleBaseInputChange} onFocus={() => setCurrentAction('sell')}/>
                     </InputWrapper>
-                    <StyledDropdown 
+                    <StyledDropdown
+                        data-testid="base-currency-dropdown"
                         search 
                         selection 
                         options={[...stateOptions, {
@@ -192,7 +192,7 @@ const Converter:FC = () => {
             </ConverterContainer>
             {
                 baseCcy !== translateToCcy &&
-                <Indicator 
+                <Indicator
                     operationType={currentAction}
                     leftSideValue={baseInput}
                     leftSideCurrency={baseCcy}
