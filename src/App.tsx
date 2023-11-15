@@ -22,7 +22,6 @@ function App() {
 
   useEffect(() => {
     if (!isLoading && !error) {
-      //TODO: Refactor this:
       let typeChangedData = (data as Rate[]).map((item) => ({
         base_ccy: item.base_ccy,
         buy: +item.buy,
@@ -54,7 +53,7 @@ function App() {
       </Dimmer>
       <ApiErrorModal isOpen={!!error} handleClose={handleAPIModalClose}/>
       <Footer/>
-      </>
+    </>
   );
 }
 

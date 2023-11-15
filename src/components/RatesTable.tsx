@@ -4,7 +4,6 @@ import RatesTableItem from './RatesTableItem';
 import { useStore } from '../store';
 import { Rate } from '../types';
 
-
 const TableWrapper = styled.div`
     width: 100%;
     margin-bottom: 150px;

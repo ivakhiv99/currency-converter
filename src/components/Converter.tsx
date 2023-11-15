@@ -123,7 +123,6 @@ const Converter:FC = () => {
 
     useEffect(() => triggerConvert(), [ratesData, baseInput, translatedInput, baseCcy, translateToCcy, currentAction]);
 
-    // TODO: unify this functions?
     const handleBaseInputChange = (e: React.FormEvent<HTMLInputElement>) => {
         if(e.currentTarget?.value) {
             setBaseInput(+e.currentTarget?.value);

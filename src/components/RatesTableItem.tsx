@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { Popup } from 'semantic-ui-react';
 import styled from 'styled-components';
-import useDebounce from '../utils/useDebounce';
 
 const StyledInput = styled.input`
     border: none;
@@ -20,7 +19,7 @@ interface IRatesTableItem {
     handleChange: (value: string) => void
 }
 
-//TODO: Add debounce  
+//TODO: Add debounce
 const RatesTableItem:FC<IRatesTableItem> = ({defaultValue, handleChange}) => {
     const [inputValue, setInputvalue] = useState<string>(defaultValue);
     const [popupIsOpen, setPopupIsOpen] = useState<boolean>(false);
