@@ -52,7 +52,7 @@ function App() {
       <Dimmer active={isLoading}>
           <Loader>Loading</Loader>
       </Dimmer>
-      {/* <ApiErrorModal isOpen={!!error} handleClose={handleAPIModalClose}/>    */}
+      <ApiErrorModal isOpen={!!error} handleClose={handleAPIModalClose}/>   
     </>
   );
 }
