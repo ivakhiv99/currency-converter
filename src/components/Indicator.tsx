@@ -1,7 +1,6 @@
 import { FC } from "react";
 import styled from "styled-components";
 
-
 const Wrapper = styled.div`
     width: 100%;
 
@@ -11,12 +10,16 @@ const Wrapper = styled.div`
 
     padding-bottom: 3px;
     border-bottom: 1px solid #e3e5e5;
-`
+`;
 
 const Block = styled.p`
     font-size: 22px;
     margin: 0;
-`
+
+    @media (max-width: 768px) {
+        font-size: 16px;
+    }
+`;
 
 interface IIndicator {
     operationType: string;
@@ -27,13 +30,12 @@ interface IIndicator {
 }
 
 const Indicator:FC<IIndicator> = ({operationType, leftSideValue, leftSideCurrency, rightSideValue, rightSideCurrency}) => {
-
     const action = operationType === 'sell' ? 'SELL' : 'BUY';
     const result = operationType === 'sell' ? 'GET' : 'FOR';
     
     return (
-        <Wrapper  data-testid="exchange-indicator">
-            <Block>{`${action} ${leftSideValue} ${leftSideCurrency}`}</Block>
+        <Wrapper data-testid="exchange-indicator">
+            <Block>{`${action} ${leftSideValue} ${leftSideCurrency} `}</Block>
             <Block>{`${result} ${rightSideValue} ${rightSideCurrency}`}</Block>
         </Wrapper>
     );

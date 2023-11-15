@@ -8,18 +8,32 @@ import Indicator from './Indicator';
 const FlexRow = styled.div`
     display: flex;
     flex-direction: row;
-`
+`;
+
+const Wrapper = styled.div`
+    margin-bottom: 100px;
+`;
+
 const ConverterContainer = styled(FlexRow)`
     justify-content: space-around;
     align-items: flex-end;
 
     margin-bottom: 20px;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: center;
+    }
 `;
 
 const SectionWrapper = styled.div`
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+
+    @media (max-width: 768px) {
+        margin-bottom: 15px;
+    }
 `;
 
 const InputWrapper = styled.div`
@@ -53,8 +67,10 @@ const SwapButton = styled(Button)`
 const Converter:FC = () => {
     //TODO: use enums for sell/buy
     const [currentAction, setCurrentAction] = useState<string>('sell');
+
     const [baseInput, setBaseInput] = useState<number>(100);
     const [baseCcy, setBaseCcy] = useState<string>('UAH');
+
     const [translatedInput, setTranslatedInput] = useState<number>(100);
     const [translateToCcy, setTranslateToCcy] = useState<string>('UAH');
 
@@ -123,17 +139,18 @@ const Converter:FC = () => {
 
     useEffect(() => triggerConvert(), [ratesData, baseInput, translatedInput, baseCcy, translateToCcy, currentAction]);
 
+    // TODO: unify this functions?
     const handleBaseInputChange = (e: React.FormEvent<HTMLInputElement>) => {
         if(e.currentTarget?.value) {
             setBaseInput(+e.currentTarget?.value);
         } else setBaseInput(0);
-    }
+    };
 
     const handleTranslatedInputChange = (e: React.FormEvent<HTMLInputElement>) => {
         if(e.currentTarget?.value) {
             setTranslatedInput(+e.currentTarget?.value)
         } else setBaseInput(0);
-    }
+    };
 
     const switchValues = () => {
         let temp: number | string = baseCcy;
@@ -148,7 +165,7 @@ const Converter:FC = () => {
     };
 
     return (
-        <div>
+        <Wrapper>
             <ConverterContainer data-testid="converter-container">
                 <SectionWrapper>
                     <InputWrapper>
@@ -199,8 +216,7 @@ const Converter:FC = () => {
                     rightSideCurrency={translateToCcy}
                 />
             }
-
-        </div>
+        </Wrapper>
     );
 };
 

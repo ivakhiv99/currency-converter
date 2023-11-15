@@ -6,7 +6,23 @@ import { Rate } from '../types';
 
 const TableWrapper = styled.div`
     width: 100%;
-    margin-bottom: 150px;
+    margin-bottom: 50px;
+    padding: 0 10px;
+
+    @media only screen and (max-width: 767px) {
+        .ui.table>thead  {
+            display: table-header-group !important;
+        }
+        .ui.table>tbody  {
+            display: table-row-group !important;
+        }
+        .ui.table>tbody>tr, .ui.table>thead>tr {
+            display: table-row !important;
+        }
+        .ui.table>tbody>tr>td, .ui.table>thead>tr>th{
+            display: table-cell !important;
+        }
+    }
 `;
 
 const ValueCell = styled(Table.Cell)`

@@ -48,11 +48,11 @@ function App() {
         <RatesTable />
         <Converter/>
       </ContentContainer>
+      <Footer/>
       <Dimmer active={isLoading}>
           <Loader>Loading</Loader>
       </Dimmer>
-      <ApiErrorModal isOpen={!!error} handleClose={handleAPIModalClose}/>
-      <Footer/>
+      {/* <ApiErrorModal isOpen={!!error} handleClose={handleAPIModalClose}/>    */}
     </>
   );
 }
